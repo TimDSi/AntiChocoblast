@@ -1,5 +1,4 @@
 #include "../CommonFunctions.h"
-#include <thread>
 
 // Detect keyboard input
 static void KeyboardListener(int refreshRate)
