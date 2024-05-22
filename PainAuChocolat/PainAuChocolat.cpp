@@ -42,14 +42,14 @@ static void ClipboardListener(int refreshRate)
 
 int main(int refreshRate)
 {
-    // Create a thread for clipboard listener
-    thread clipboardThread(ClipboardListener, refreshRate);
-
     //Waiting for Chocolatine to start
     while (!IsProcessRunning(L"Chocolatine.exe")) 
     {
         Sleep(refreshRate);
     }
+
+    // Create a thread for clipboard listener
+    thread clipboardThread(ClipboardListener, refreshRate); 
 
     //Waiting for Chocolatine to stop
     while (IsProcessRunning(L"Chocolatine.exe")) 
