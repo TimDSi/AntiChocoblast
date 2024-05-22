@@ -1,26 +1,41 @@
 #include "../CommonFunctions.h"
 
-// Detect clipboard copy
-static void ClipboardListener(int refreshRate)
+// Get the text from the clipboard
+static wstring GetClipboardText()
 {
-    // clear the clipboard
+    wstring clipboardText;
+    
     if (OpenClipboard(nullptr))
     {
-        EmptyClipboard();
+        HANDLE hClipboardData = GetClipboardData(CF_UNICODETEXT);
+        if (hClipboardData != nullptr)
+        {
+            wchar_t* pszText = static_cast<wchar_t*>(GlobalLock(hClipboardData));
+            if (pszText != nullptr)
+            {
+                clipboardText = pszText;
+                GlobalUnlock(hClipboardData);
+            }
+        }
         CloseClipboard();
     }
 
-    // detect if clipboard has been filled
+    return clipboardText;
+}
+
+// Detect clipboard upadtes
+static void ClipboardListener(int refreshRate)
+{
+    // save the current clipboard 
+    const wstring clipboardText = GetClipboardText();
+
+    // detect clipboard changes
     while (true)
     {
-        if (OpenClipboard(nullptr)) 
+        if (clipboardText != GetClipboardText()) 
         {
-            if (GetClipboardData(CF_UNICODETEXT) != nullptr) 
-            {
-                ExitProcess(0); 
-            }
-            CloseClipboard(); 
-        }
+			ExitProcess(0); 
+		}
         Sleep(refreshRate); 
     }
 }
